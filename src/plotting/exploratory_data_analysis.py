@@ -2,6 +2,19 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+# setting general template
+sns.set_palette("colorblind")
+plt.style.use("seaborn-v0_8-whitegrid")
+plt.rcParams.update({
+    'font.size': 12,
+    'font.family': 'serif',
+    'axes.titlesize': 14,
+    'axes.labelsize': 12,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 11
+})
+
+
 # Functions for Exploratory Data Analysis
 # 1. Boxplot
 def plot_boxplot(column, data, title=None, hue=None, by=None, save=False):
@@ -141,7 +154,7 @@ def plot_barchart(column, data, x_label, title=None, hue=None, rotation=0, save 
     plt.show()
 
 if __name__ =="__main__":
-    from data.data_loading import load_credit_data
+    from data.data_collection import load_credit_data
     df = load_credit_data()
     plot_boxplot(data= df, column= 'credit_amount', by = 'marital_status',hue='Y',title= 'Distribution of Credit Amount by Marital Status')
 

@@ -1,6 +1,12 @@
 def split_columns(df,continuous_columns=None):
     """
     Splits Data into categorical and continuous
+
+    Returns
+    ------
+    dict
+        - continuous_columns (list)
+        - categorical_columns (list)
     """
     # Continuous columns
     if continuous_columns is None:
@@ -21,5 +27,14 @@ def split_columns(df,continuous_columns=None):
             ]
         
     categorical_columns = list(set(df.columns.to_list()) - set(continuous_columns))
-    return {"continuous columns": continuous_columns,
-            "categorical columns": categorical_columns}
+    return {"continuous_columns": continuous_columns,
+            "categorical_columns": categorical_columns}
+
+def drop_duplicates(df):
+    df = df.drop_duplicates()
+    return df
+
+def drop_null(df):
+    df = df.dropna()
+    return df
+
