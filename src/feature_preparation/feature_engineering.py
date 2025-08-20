@@ -1,5 +1,6 @@
+# be careful not to edit the actual data always work on copies or use inplace method if copying is expensive
 import numpy as np
-def create_payment_consistency(df, payment_columns=None):  # Fixed typo too
+def create_payment_consistency(df, payment_columns=None):
     """
     Creates `payment_consistency` feature.
     
@@ -8,7 +9,7 @@ def create_payment_consistency(df, payment_columns=None):  # Fixed typo too
     pd.DataFrame
         New DataFrame with added `payment_consistency` feature
     """
-    df_copy = df.copy()  # ✅ Make a copy first
+    df_copy = df.copy()
     
     if payment_columns is None:
         payment_columns = [
@@ -21,7 +22,7 @@ def create_payment_consistency(df, payment_columns=None):  # Fixed typo too
         ]
     
     df_copy['payment_consistency'] = df_copy[payment_columns].std(axis=1)
-    return df_copy  # ✅ Return the copy
+    return df_copy
 
 
 def create_total_delays(df, delay_columns=None):
@@ -33,7 +34,7 @@ def create_total_delays(df, delay_columns=None):
     pd.DataFrame
         New DataFrame with added `total_delays` feature
     """
-    df_copy = df.copy()  # ✅ Make a copy
+    df_copy = df.copy()
     
     if delay_columns is None:
         delay_columns = [
@@ -44,32 +45,31 @@ def create_total_delays(df, delay_columns=None):
     df_copy['total_delays'] = df_copy[delay_columns].sum(axis=1)
     return df_copy
 
+# Functions to scale the data
+from sklearn.preprocessing import StandardScaler
 
-def transform_credit_amount(df, column=None):
+def get_scaler(train_data, columns):
     """
-    Applies square root transformation to credit amount.
-    
+    Initialise scaler and fit on train data. This prevents data leakage.
+
     Returns
     -------
-    pd.DataFrame
-        New DataFrame with transformed credit amount
+    StandardScaler Object
+        fitted scaler on train_data
     """
-    df_copy = df.copy()  # ✅ Make a copy
-    
-    if column is None:
-        column = "credit_amount"
-    
-    df_copy[column] = np.sqrt(df_copy[column]+1)
-    return df_copy
-# now i have to normalise the features
-from sklearn.preprocessing import StandardScaler
-def get_scaler(train_data, columns):
-    # Instantiait scaler
     scaler = StandardScaler()
     scaler.fit(X=train_data[columns])
     return scaler
 
 def scale_data(data, columns, scaler):
+    """Scales the `columns` of selected `data` using scaler.
+    
+    Returns
+    -------
+    pd.DataFrame
+        Scaled data
+
+    """
     data_copy = data.copy()
     data_copy[columns] = scaler.transform(data_copy[columns])
     return data_copy

@@ -13,7 +13,8 @@ plt.rcParams.update({
     'xtick.labelsize': 12,
     'ytick.labelsize': 11
 })
-
+# Setting random state for reproducibility and Template for Visualisations
+random_state= 70 
 
 # Functions for Exploratory Data Analysis
 # 1. Boxplot
