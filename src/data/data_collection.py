@@ -48,3 +48,4 @@ def load_credit_data():
 if __name__ == "__main__": 
     data = load_credit_data()
     print(data.head())
+    print("Data loading complete. ")

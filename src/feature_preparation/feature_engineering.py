@@ -1,5 +1,6 @@
-# be careful not to edit the actual data always work on copies or use inplace method if copying is expensive
-import numpy as np
+# be careful not to edit the actual data always work on copies or use inplace method
+#  if copying is expensive
+
 def create_payment_consistency(df, payment_columns=None):
     """
     Creates `payment_consistency` feature.

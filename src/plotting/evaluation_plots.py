@@ -3,6 +3,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from model_selection.evaluation_utils import get_positive_class_metric
+
 # setting general template
 sns.set_palette("colorblind")
 plt.style.use("seaborn-v0_8-whitegrid")
@@ -46,4 +48,82 @@ def plot_confusion_matrix(y_pred, y_true, title=None):
     plt.ylabel('True Label')
     plt.title(title)
     plt.tight_layout()
+    plt.show()
+
+  # models {"name":model,}
+  
+  
+    # I need to do for the train and then for the validation splits
+def plot_positive_class_metric(models,X_true, y_true,title, cross_val=False, save=False):
+    """
+    model: dict
+        Dictionary containing model name and actual model.
+    
+    X_true : array-like
+        Feature matrix to train or evaluate the classifier. 
+
+    y_true : array-like
+        Target labels corresponding to `X_true`.
+
+    title: str
+        Title of Plot and how it will be saved
+    
+    cross_val : bool, optional, default=False
+        Whether to perform cross-validation. If True, uses `cross_val_score`.
+    
+    cv : StratifiedKfold, optional
+    Should be defined globally before passing into the function. 
+    Comes into play ` if `cross_val=True`. Passed to `cross_val_score.
+    
+    """
+    recall_result = []
+    precision_result = []
+    f1_result = []
+    model_name=[]
+    for name, model in models.items():
+        metric = get_positive_class_metric(clf = model,X_true=X_true,
+                                            y_true=y_true, cross_val = cross_val) 
+        
+        recall_result.append(metric[0])
+        precision_result.append(metric[1])
+        f1_result.append(metric[2])
+        model_name.append(name)
+        
+    all_positive_metrics = pd.DataFrame({
+    'Models': model_name,
+    'Recall (1)':recall_result,
+    "Precision (1)" : precision_result, 
+    "F1 score (1)" : f1_result
+    })
+    all_positive_metrics.sort_values(by= 'Models', inplace = True)
+
+    # We need to reshape the DataFrame into a  long format for grouped bar chart
+    all_positive_metrics_reshaped = pd.melt(
+    all_positive_metrics,
+    id_vars='Models', # type: ignore
+    value_vars=['Recall (1)', 'Precision (1)',"F1 score (1)"],
+    var_name='Metric',
+    value_name='Score'
+    )
+
+# Plot grouped bar chart
+    plt.figure(figsize=(9.5, 6))
+    ax = sns.barplot(data=all_positive_metrics_reshaped, x='Models', y='Score', hue='Metric')
+
+# Add data labels
+    for container in ax.containers:
+        ax.bar_label(container, fmt='%.2f', label_type='edge')
+
+    plt.title(title)
+    plt.xticks(rotation=22.5)
+    plt.ylabel('Score')
+    plt.xlabel('Model')
+    plt.legend(title='Metric', frameon = True)
+    plt.tight_layout()
+    if save:
+        plt.savefig(f'{title}.png', 
+            dpi=300, 
+            bbox_inches='tight',    
+            pad_inches=0.1,         
+            facecolor='white') 
     plt.show()

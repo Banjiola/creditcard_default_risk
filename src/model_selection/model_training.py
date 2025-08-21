@@ -4,16 +4,10 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split, StratifiedKFold
-
+from sklearn.model_selection import train_test_split
+import joblib
 
 random_state= 70 
-# crossvalidation slits
-cv = StratifiedKFold(n_splits= 5,
-                     shuffle= True, #splits
-                     random_state= random_state)
-
-
 # split data
 def get_train_test_data(X, y, train_size=0.7, random_state=random_state, stratify=False):
     """
@@ -47,28 +41,7 @@ def get_train_test_data(X, y, train_size=0.7, random_state=random_state, stratif
     )
     return X_train, X_test, y_train, y_test
 
-from model_selection.evaluation_utils import get_cv_metrics, get_train_metrics
-# used to save the random search object which contained the finetuned model
-import joblib
 
-
-'''def evaluate_(clf)
-# Evaluation on Engineered Train Data
-get_train_metrics(clf= tree_clf,
-                  title= "Decision Tree (untuned, Engineered): Training Set Results")
-
-# Evaluation on Cross Validation Splits
-get_cv_metrics(clf= tree_clf,
-                  title= "Decision Tree (untuned): 5-Fold Stratified Cross-Validation Results"
-                  )'''
-def train_and_save_model(model, X_train, y_train, model_name):
-    """
-    Trains a given model and saves it under models/ directory.
-    """
-    model.fit(X_train, y_train)
-    joblib.dump(model, f"models/{model_name}.joblib")
-    print(f"{model_name} saved successfully!")
-    
     # Model 1
 def train_decision_tree(X_train,y_train, model_name):
     model = DecisionTreeClassifier(random_state=random_state)
@@ -97,9 +70,12 @@ def train_knn(X_train,y_train,model_name):
     model.fit(X_train,y_train)
     joblib.dump(model,f"../models/{model_name}.joblib")
     print(f"{model_name} complete and saved")
+
 # Model 5
 def train_xgb(X_train,y_train,model_name):
     model = XGBClassifier()
     model.fit(X_train,y_train)
     joblib.dump(model,f"../models/{model_name}.joblib")
     print(f"{model_name} complete and saved")
+
+# Since I am repeating code, I am sure there is a more maintainable way. OOP?

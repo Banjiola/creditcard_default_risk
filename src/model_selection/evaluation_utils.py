@@ -40,13 +40,13 @@ def get_train_metrics(clf, title, X_train, y_train):
 
     Parameters
     ----------
-    - clf : estimator
+    clf : estimator
         sklearn estimator used for the classification. The estimator must not be fitted yet.
-    - title : str
+    title : str
         Title for metrics that would be produced.
-    - X_train : array-like, optional
+    X_train : array-like
         Training Feature Matrix. 
-    - y_train : pd.Series, optional
+    y_train : pd.Series
         Train data values.
     
     Returns
@@ -67,15 +67,15 @@ def get_cv_metrics(clf, title,X_train, y_train, cv):
 
     Parameters
     ----------
-    - clf : sklearn.estimator
+    clf : sklearn.estimator
         Sklearn estimator used for the classification. The estimator must not be fitted yet.
-    - title : str
+    title : str
         Title for metrics that would be produced.
-    - X_train : array-like, optional
+    X_train : array-like
         Training Feature Matrix.
-    - y_train : pd.Series, optional
+    y_train : pd.Series
         Train data values.
-    - cv: StratifiedKfold CV (defined Globally)
+    cv: StratifiedKfold CV
 
     Returns
     -------
@@ -91,13 +91,15 @@ def get_cv_metrics(clf, title,X_train, y_train, cv):
         cv = cv)
 
     # Evaluate performance
-    estimator_report(y_true=cv_pred,
-                    y_pred= y_train,
+    estimator_report(y_true=y_train,
+                    y_pred= cv_pred,
                     title= title)
-# This is specifically used for the getting of evaluation metrics for our models
-# which will be used to plot the grouped bar chart for the report.
+    
+    # To ensure maintainability of code, do not hardcode values o. Always pass it as arguments
+    # This is specifically used for the getting of evaluation metrics for our models
+    # which will be used to plot the grouped bar chart for the report.
 
-def get_positive_class_metric(clf, X_true, y_true, cv, cross_val = False):
+def get_positive_class_metric(clf, X_true, y_true, cv=None, cross_val = False):
 
     """
     Gets the recall, precision, and f1_score of the positive class for classifier's using training data or cross-validation set.
@@ -105,7 +107,7 @@ def get_positive_class_metric(clf, X_true, y_true, cv, cross_val = False):
     Parameters
     ----------
     clf : estimator object
-       Already fitted Scikitlear/XGBoost Estimator. 
+       Already fitted Scikitlear/XGBoost Estimator (doesnt matter). 
 
     X_true : array-like, optional
         Feature matrix to train or evaluate the classifier. 
