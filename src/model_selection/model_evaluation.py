@@ -5,6 +5,7 @@ from imblearn.pipeline import Pipeline
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import StratifiedKFold
 
+
 random_state = 70
 cv = StratifiedKFold(n_splits= 5,
                      shuffle= True, #splits
