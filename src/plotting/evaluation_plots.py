@@ -1,9 +1,10 @@
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import average_precision_score, confusion_matrix, precision_recall_curve, roc_auc_score, roc_curve
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+from sklearn.model_selection import cross_val_predict
 from model_selection.evaluation_utils import get_positive_class_metric
+from model_selection.model_training import load_model
 
 # setting general template
 sns.set_palette("colorblind")
@@ -127,3 +128,138 @@ def plot_positive_class_metric(models,X_true, y_true,title, cross_val=False, sav
             pad_inches=0.1,         
             facecolor='white') 
     plt.show()
+
+# not used in main report
+def plot_pr_auc(clf, X_train, y_train, model_name, save = False):
+    """
+    Plot Precision-Recall curve and returns PR-AUC using cross-validation predictions.
+   
+    Parameters
+    ----------
+    clf : estimator
+        The classifier to evaluate
+    X_train: pd.DataFrame
+    y_train: pd.Series
+    model_name : str
+        Name of the model for display purposes.
+
+    Returns
+    -------
+    float
+        PR-AUC score
+    """
+    # Get probabilities for class 1 (Defaulters)
+    y_scores = cross_val_predict(clf, X_train, y_train, cv=5, method='predict_proba')[:, 1]
+    precision, recall, tholds = precision_recall_curve(y_train, y_scores)
+    pr_auc = average_precision_score(y_train, y_scores)
+
+    # Plot the PR curve
+    plt.figure(figsize=(6, 4))
+    plt.plot(recall, precision, label=f"{model_name} (PR-AUC = {pr_auc:.3f})", color='blue', linewidth=2)
+    plt.axhline(y=y_train.mean(), linestyle='--', color='gray', label='Random Classifier')
+    plt.xlabel( "Recall")
+    plt.ylabel( "Precision")
+    plt.title(f"Precision-Recall Curve - {model_name}")
+    plt.legend( frameon=True)
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    if save:
+        plt.savefig(model_name +" pr-auc", 
+                dpi=300, 
+                bbox_inches='tight',
+                pad_inches=0.1,        
+                facecolor='white')     
+    plt.show()
+
+    print(f"{model_name} PR-AUC: {pr_auc:.3f}")
+    return pr_auc
+
+def plot_auc(clf, X_train, y_train, model_name, save= False):
+    """
+    Plot ROC-AUC curve and returns ROC using cross-validation predictions.
+   
+    Parameters
+    ----------
+    clf : estimator
+        The classifier to evaluate
+    X_train: pd.DataFrame
+    y_train: pd.Series
+    model_name : str
+        Name of the model for display purposes.
+                
+    Returns
+    -------
+    float
+        PR-AUC score
+    """
+    # Get probabilities for class 1 (Defaulters)
+    y_scores = cross_val_predict(clf, X_train, y_train, cv=5, method='predict_proba')[:, 1]
+    fpr, tpr, tholds = roc_curve(y_train, y_scores)
+
+    # Compute AUC
+    auc = roc_auc_score(y_train, y_scores)
+    # Plot the ROC curve
+    plt.figure(figsize=(6, 4))
+    plt.plot(fpr, tpr, label=f"{model_name} (AUC = {auc:.3f})", color='blue', linewidth=2)
+    plt.plot([0, 1], [0, 1], linestyle='--', color='gray', label='Random Classifier')
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title(f"ROC Curve - {model_name}")
+    plt.legend(frameon=True)
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    if save:
+        plt.savefig(model_name +" auc", 
+                dpi=300, 
+                bbox_inches='tight',
+                pad_inches=0.1,        
+                facecolor='white')     
+    plt.show()
+
+    print(f"{model_name} AUC-ROC: {auc:.3f}")
+    return auc
+
+if __name__ =='__main__':
+    # load models
+       # Load data
+    scaled_X_train_with_engineering = pd.read_csv("C:/Users/banji/creditCard_default_risk"
+    "/data/scaled_X_train_engineering.csv")
+    X_test= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/X_test.csv")
+
+    y_train= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_train.csv").squeeze()
+    y_test = pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_test.csv").squeeze()
+    
+    # load models trained on scaled_X_train_engineering
+    tree = load_model("dec_tree_with_feature_engineering")
+    log_reg = load_model("log_reg_with_feature_engineering")
+    svm = load_model("svm_with_feature_engineering")
+    knn = load_model("knn_with_feature_engineering")
+    xgb = load_model("xgb_feature_engineering")
+
+
+    models = {
+    "Decision Tree": tree,
+    "Logistic Regression":log_reg,
+    "Support Vector Machine":svm,
+    "K-Nearest Neighbour":knn,
+    "XGBoost":xgb    
+    }
+
+    '''    plot_positive_class_metric(
+            models=models,
+            X_true=scaled_X_train_with_engineering,
+            y_true=y_train,
+            save= True,
+            title= "Positive Metrics for Untuned Models on Training Set"
+            )
+        print( "Positive Metrics for Untuned Models on Training Set Completed")
+'''
+    plot_positive_class_metric(
+        models=models,
+        X_true=scaled_X_train_with_engineering,
+        y_true=y_train,
+        save= True,
+        cross_val=True,
+        title= "Positive Metrics for Untuned Models on Cross-Validation set"
+        )
+    print("Positive Metrics for Untuned Models on Cross-Validation set COMPLETED")

@@ -1,6 +1,4 @@
-from sklearn.metrics import classification_report, recall_score, f1_score, precision_score\
-    ,precision_recall_curve,average_precision_score, roc_auc_score, roc_curve
-
+from sklearn.metrics import classification_report, recall_score, f1_score, precision_score
 from sklearn.model_selection import cross_val_predict
 # Setting random state for reproducibility and Template for Visualisations
 random_state= 70 
@@ -24,14 +22,16 @@ def estimator_report(y_pred, y_true, title=None):
 
 
 
-    print(f"{'='*15} {title} {'='*10}")
-    print(f"{'='*20} Classification Report {'='*20}")
+    print(f" {title} ".center(75,'='))
+    print(" Classification Report".center(75,'='))
     print(classification_report(y_true = y_true, y_pred= y_pred, target_names=['Non-Default', 'Default']))
 
-    print((20+len(' Classification Report ')+20)*'=')
+    print(75*'-')
     print(f"Recall: {recall_score(y_true, y_pred):.5f}")
     print(f"Precision-Score: {precision_score(y_true, y_pred):.5f}")
     print(f"F1-Score: {f1_score(y_true, y_pred):.5f}")
+    print(75*'=')
+    print()
 
 
 def get_train_metrics(clf, title, X_train, y_train):

@@ -1,4 +1,5 @@
-# Import Classifiers
+import pandas as pd
+#  Import Classifiers
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
@@ -42,40 +43,88 @@ def get_train_test_data(X, y, train_size=0.7, random_state=random_state, stratif
     return X_train, X_test, y_train, y_test
 
 
+import joblib
+from pathlib import Path
+
+def save_model(model, model_name):
+    """Saves a model to the models directory"""
+    # Ensure models folder exists
+    folder = Path("../models")
+    folder.mkdir(parents=True, exist_ok=True)
+
+    # Full path
+    model_path = folder / f"{model_name}.joblib"
+    
+    # Save the model
+    joblib.dump(model, model_path)
+    print(f"{model_name} saved at {model_path}") # remove later
+    return f"{model_name} saved at {model_path}"
+
+
+def load_model(model_name):
+    """Load a saved model from the models directory"""
+    model_path = Path("../models") / f"{model_name}.joblib"
+    
+    # Load the model
+    model = joblib.load(model_path)
+    print(f"{model_name} loaded from {model_path}") # remove later
+    return model
+
+
     # Model 1
-def train_decision_tree(X_train,y_train, model_name):
+def train_decision_tree(X_train,y_train, model_name, save=True):
     model = DecisionTreeClassifier(random_state=random_state)
     model.fit(X_train,y_train)
-    joblib.dump(model,f"../models/{model_name}.joblib")
-    print(f"{model_name} complete and saved")
+    if save:
+        save_model(model,model_name)
+    return model
+
 # Model 2
-def train_logistic_regression(X_train,y_train,model_name):
+def train_logistic_regression(X_train,y_train,model_name,save=True):
     model = LogisticRegression(C= 30, random_state= random_state)
     model.fit(X_train,y_train)
-    joblib.dump(model,f"../models/{model_name}.joblib")
-    print(f"{model_name} complete and saved")
+    if save:
+        save_model(model,model_name)
+    return model
 
 # Model 3
-def train_svm(X_train,y_train,model_name):
+def train_svm(X_train,y_train,model_name,save=True):
     model = SVC(kernel='sigmoid',
                 probability= True,
                 random_state=random_state)
     model.fit(X_train,y_train)
-    joblib.dump(model,f"../models/{model_name}.joblib")
-    print(f"{model_name} complete and saved")
+    if save:
+        save_model(model,model_name)
+    return model
 
 # Model 4
-def train_knn(X_train,y_train,model_name):
+def train_knn(X_train,y_train,model_name,save=True):
     model = KNeighborsClassifier(n_neighbors= 145)
     model.fit(X_train,y_train)
-    joblib.dump(model,f"../models/{model_name}.joblib")
-    print(f"{model_name} complete and saved")
+    if save:
+        save_model(model,model_name)
+
+    return model
 
 # Model 5
-def train_xgb(X_train,y_train,model_name):
+def train_xgb(X_train,y_train,model_name,save=True):
     model = XGBClassifier()
     model.fit(X_train,y_train)
-    joblib.dump(model,f"../models/{model_name}.joblib")
-    print(f"{model_name} complete and saved")
-
+    if save:
+        save_model(model,model_name)
+    return model
 # Since I am repeating code, I am sure there is a more maintainable way. OOP?
+
+if __name__ == "__main__":
+    scaled_X_train_with_engineering = pd.read_csv("C:/Users/banji/creditCard_default_risk/data/scaled_X_train_engineering.csv")
+    X_test= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/X_test.csv")
+
+    y_train= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_train.csv").squeeze()
+    y_test = pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_test.csv").squeeze()
+
+    train_decision_tree(scaled_X_train_with_engineering,y_train,"dec_tree_with_feature_engineering")
+    train_knn(scaled_X_train_with_engineering,y_train,"knn_with_feature_engineering")
+    train_svm(scaled_X_train_with_engineering,y_train,"svm_with_feature_engineering")
+    train_xgb(scaled_X_train_with_engineering,y_train,"xgb_feature_engineering")
+    train_logistic_regression(scaled_X_train_with_engineering,y_train,"log_reg_with_feature_engineering")
+    print("Done")

@@ -10,4 +10,4 @@ def drop_correlated_features(df, columns=None):
         'april_delay'
         ]
     df_copy = df.drop(columns=columns_to_drop)
-    return df_copy
+    return df_copy, columns_to_drop

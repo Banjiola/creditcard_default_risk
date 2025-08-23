@@ -1,6 +1,6 @@
 def split_columns(df,continuous_columns=None):
     """
-    Splits data into categorical and continuous columns.
+    Splits orginal data into categorical and continuous columns.
 
     Returns
     -------

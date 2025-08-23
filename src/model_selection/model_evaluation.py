@@ -1,24 +1,43 @@
-from evaluation_utils import get_train_metrics
-from sklearn.model_selection import RandomizedSearchCV, cross_val_predict
+import pandas as pd
+from evaluation_utils import get_cv_metrics, get_train_metrics
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from imblearn.pipeline import Pipeline 
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import StratifiedKFold
+from model_selection.model_training import load_model
 
-
-random_state = 70
-cv = StratifiedKFold(n_splits= 5,
+RANDOM_STATE = 70
+CV = StratifiedKFold(n_splits= 5,
                      shuffle= True, #splits
-                     random_state= random_state)
+                     random_state= RANDOM_STATE)
 
+if __name__=="__main__":
 
-tree = joblib.load("../models/dec_tree_with_feature_engineering.joblib")
-log_reg = joblib.load("../models/log_reg_with_feature_engineering.joblib")
-svm = joblib.load("../models/svm_with_feature_engineering.joblib")
-knn = joblib.load("../models/knn_with_feature_engineering.joblib")
-xgb = joblib.load("../models/xgb_feature_engineering.joblib")
-get_train_metrics(tree, "Decision Tree",X_train_with_featured, y_train )
-get_train_metrics(log_reg, "log reg",X_train_with_featured, y_train )
-get_train_metrics(svm, "SVM",X_train_with_featured, y_train )
-get_train_metrics(knn, "KNN",X_train_with_featured, y_train )
-get_train_metrics(xgb, "XGB",X_train_with_featured, y_train )
+    # Load data
+    scaled_X_train_with_engineering = pd.read_csv("C:/Users/banji/creditCard_default_risk"
+    "/data/scaled_X_train_engineering.csv")
+    X_test= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/X_test.csv")
+
+    y_train= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_train.csv").squeeze()
+    y_test = pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_test.csv").squeeze()
+    
+    # load models trained on scaled_X_train_engineering
+    tree = load_model("dec_tree_with_feature_engineering")
+    log_reg = load_model("log_reg_with_feature_engineering")
+    svm = load_model("svm_with_feature_engineering")
+    knn = load_model("knn_with_feature_engineering")
+    xgb = load_model("xgb_feature_engineering")
+
+    print("Evaluation Metrics of Untuned Models on Training Data".upper().center(75,'='))
+    get_train_metrics(tree, "Decision Tree",scaled_X_train_with_engineering, y_train)
+    get_train_metrics(log_reg, "Logistic Regression",scaled_X_train_with_engineering, y_train )
+    get_train_metrics(svm, "Support Vector Machine",scaled_X_train_with_engineering, y_train )
+    get_train_metrics(knn, "K-Nearest Neighbour",scaled_X_train_with_engineering, y_train )
+    get_train_metrics(xgb, "Xtreme Gradient Boost",scaled_X_train_with_engineering, y_train )
+
+    print("Evaluation Metrics of Untuned Models on Cross Validation Data".upper().center(75,'='))
+    get_cv_metrics(tree, "Decision Tree",scaled_X_train_with_engineering, y_train,cv=CV)
+    get_cv_metrics(log_reg, "Logistic Regression",scaled_X_train_with_engineering, y_train,cv=CV )
+    get_cv_metrics(svm, "Support Vector Machine",scaled_X_train_with_engineering, y_train,cv=CV )
+    get_cv_metrics(knn, "K-Nearest Neighbour",scaled_X_train_with_engineering, y_train,cv=CV )
+    get_cv_metrics(xgb, "Xtreme Gradient Boost",scaled_X_train_with_engineering, y_train ,cv=CV)

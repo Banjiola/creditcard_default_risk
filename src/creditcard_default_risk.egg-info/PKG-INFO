@@ -1,0 +1,21 @@
+Metadata-Version: 2.4
+Name: creditcard-default-risk
+Version: 0.1.0
+Summary: Credit card default risk prediction project
+Author: Olabanji Olaniyan
+Requires-Python: >=3.8
+Requires-Dist: ipykernel
+Requires-Dist: ucimlrepo>=0.0.7
+Requires-Dist: matplotlib>=3.9.0
+Requires-Dist: numpy>=1.24.0
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: seaborn>=0.13.0
+Requires-Dist: scipy>=1.11.0
+Requires-Dist: joblib>=1.4.0
+Requires-Dist: imbalanced-learn>=0.12.0
+Requires-Dist: scikit-learn>=1.5.0
+Requires-Dist: xgboost>=3.0.4
+Dynamic: author
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
