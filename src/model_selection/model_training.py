@@ -50,7 +50,7 @@ def save_model(model, model_name):
     """Saves a model to the models directory"""
     # Ensure models folder exists
     folder = Path("../models")
-    folder.mkdir(parents=True, exist_ok=True)
+    folder.mkdir(parents=True, exist_ok=True) # moving forward i should have like a file for constants such as this
 
     # Full path
     model_path = folder / f"{model_name}.joblib"
@@ -126,5 +126,5 @@ if __name__ == "__main__":
     train_knn(scaled_X_train_with_engineering,y_train,"knn_with_feature_engineering")
     train_svm(scaled_X_train_with_engineering,y_train,"svm_with_feature_engineering")
     train_xgb(scaled_X_train_with_engineering,y_train,"xgb_feature_engineering")
-    train_logistic_regression(scaled_X_train_with_engineering,y_train,"log_reg_with_feature_engineering")
+    train_logistic_regression(scaled_X_train_with_engineering,y_train,"log_reg_with_feature_engineering", save=False)
     print("Done")

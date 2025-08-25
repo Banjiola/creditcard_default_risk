@@ -75,3 +75,4 @@ def scale_data(data, columns, scaler):
     data_copy[columns] = scaler.transform(data_copy[columns])
     return data_copy
 
+# turns out using a pipeline object simplifies this a whole lot
