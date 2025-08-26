@@ -108,7 +108,7 @@ def tune_params(
                                        cv = CV, #stratified k fold has been defined earlier
                                        scoring = scoring,
                                        refit='f1', # This is the overall parameter we are trying to optimise
-                                       n_jobs= -1, # I opted to use all of my CPU's 8 cores as the SVM experiment lasted 6 hrs+
+                                       n_jobs= None,
                                        verbose= 2, # This shows some progress of the cv search 
                                        random_state = random_state)
     
@@ -132,9 +132,8 @@ def tune_params(
 def save_random_search_object(object, object_name):
     """Saves a random object to appropriate
     directory"""
-    
-    
-    folder = Path("../models/random_search_objects")
+
+    folder = Path("models/random_search_objects")
     folder.mkdir(parents=True, exist_ok=True) 
 
     # Full path
@@ -156,11 +155,11 @@ def load_random_search_object(object_name):
 
 if __name__ =='__main__':
     print('here1')
-    scaled_X_train_with_engineering = pd.read_csv("../../datasets/scaled_X_train_engineering.csv")
+    scaled_X_train_with_engineering = pd.read_csv("datasets/scaled_X_train_engineering.csv")
     print('here2')
-    X_test= pd.read_csv("../data/X_test.csv")
-    y_train= pd.read_csv("../../datasets/y_train.csv").squeeze()
-    y_test = pd.read_csv("../../datasets/y_test.csv").squeeze()
+    X_test= pd.read_csv("datasets/X_test.csv")
+    y_train= pd.read_csv("datasets/y_train.csv").squeeze()
+    y_test = pd.read_csv("datasets/y_test.csv").squeeze()
    
     tree = load_model("dec_tree_with_feature_engineering")
     log_reg = load_model("log_reg_with_feature_engineering")
@@ -204,7 +203,7 @@ if __name__ =='__main__':
         )
     print("Tuning of Decision Tree Complete".center(100))
     print('='*100)
-'''
+
     # Run randomised search
     log_reg_random_search = tune_params(
         clf= log_reg_pipeline,
@@ -239,5 +238,10 @@ if __name__ =='__main__':
         y_train=y_train,
         param_dist= xgb_param_dist)
     print("Tuning of XGB Complete".center(100))
-    print('='*100)'''
-save_random_search_object(tree_random_search, 'decision tree')
+    print('='*100)
+
+save_random_search_object(tree_random_search, 'tree_random_search')
+save_random_search_object(log_reg_random_search, 'log_reg_random_search')
+save_random_search_object(svm_random_search, 'svm_random_search')
+save_random_search_object(knn_random_search, 'knn_random_search')
+save_random_search_object(xgb_random_search, 'xgb_random_search')
