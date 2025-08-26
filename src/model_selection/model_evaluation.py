@@ -11,12 +11,10 @@ CV = StratifiedKFold(n_splits= 5,
 if __name__=="__main__":
 
     # Load data
-    scaled_X_train_with_engineering = pd.read_csv("C:/Users/banji/creditCard_default_risk"
-    "/data/scaled_X_train_engineering.csv")
-    X_test= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/X_test.csv")
-
-    y_train= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_train.csv").squeeze()
-    y_test = pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_test.csv").squeeze()
+    scaled_X_train_with_engineering = pd.read_csv("datasets/scaled_X_train_engineering.csv")
+    X_test= pd.read_csv("datasets/X_test.csv")
+    y_train= pd.read_csv("datasets/y_train.csv").squeeze()
+    y_test = pd.read_csv("datasets/y_test.csv").squeeze()
     
     # load models trained on scaled_X_train_engineering
     tree = load_model("dec_tree_with_feature_engineering")

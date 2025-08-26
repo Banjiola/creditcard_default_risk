@@ -146,7 +146,7 @@ def save_random_search_object(object, object_name):
 
 def load_random_search_object(object_name):
     """Load a saved random object from the models directory"""
-    object_path = Path("../models/random_search_objects") / f"{object_name}.joblib"
+    object_path = Path("models/random_search_objects") / f"{object_name}.joblib"
     
     # Load the model
     object = joblib.load(object_path)
@@ -154,9 +154,7 @@ def load_random_search_object(object_name):
     return object    
 
 if __name__ =='__main__':
-    print('here1')
     scaled_X_train_with_engineering = pd.read_csv("datasets/scaled_X_train_engineering.csv")
-    print('here2')
     X_test= pd.read_csv("datasets/X_test.csv")
     y_train= pd.read_csv("datasets/y_train.csv").squeeze()
     y_test = pd.read_csv("datasets/y_test.csv").squeeze()
@@ -240,8 +238,8 @@ if __name__ =='__main__':
     print("Tuning of XGB Complete".center(100))
     print('='*100)
 
-save_random_search_object(tree_random_search, 'tree_random_search')
-save_random_search_object(log_reg_random_search, 'log_reg_random_search')
-save_random_search_object(svm_random_search, 'svm_random_search')
-save_random_search_object(knn_random_search, 'knn_random_search')
-save_random_search_object(xgb_random_search, 'xgb_random_search')
+    save_random_search_object(tree_random_search, 'tree_random_search')
+    save_random_search_object(log_reg_random_search, 'log_reg_random_search')
+    save_random_search_object(svm_random_search, 'svm_random_search')
+    save_random_search_object(knn_random_search, 'knn_random_search')
+    save_random_search_object(xgb_random_search, 'xgb_random_search')

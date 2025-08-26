@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_val_predict
 from model_selection.evaluation_utils import get_positive_class_metric
 from model_selection.model_training import load_model
+from model_selection.model_tuning import load_random_search_object
 
 # setting general template
 sns.set_palette("colorblind")
@@ -122,7 +123,7 @@ def plot_positive_class_metric(models,X_true, y_true,title, cross_val=False, sav
     plt.legend(title='Metric', frameon = True)
     plt.tight_layout()
     if save:
-        plt.savefig(f'{title}.png', 
+        plt.savefig(f'reports/figures/{title}.png', 
             dpi=300, 
             bbox_inches='tight',    
             pad_inches=0.1,         
@@ -164,7 +165,7 @@ def plot_pr_auc(clf, X_train, y_train, model_name, save = False):
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     if save:
-        plt.savefig(model_name +" pr-auc", 
+        plt.savefig(f"reports/figures/{model_name +" pr-auc"}.png", 
                 dpi=300, 
                 bbox_inches='tight',
                 pad_inches=0.1,        
@@ -209,7 +210,7 @@ def plot_auc(clf, X_train, y_train, model_name, save= False):
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     if save:
-        plt.savefig(model_name +" auc", 
+        plt.savefig(f"reports/figures/{model_name +" auc"}.png", 
                 dpi=300, 
                 bbox_inches='tight',
                 pad_inches=0.1,        
@@ -222,44 +223,103 @@ def plot_auc(clf, X_train, y_train, model_name, save= False):
 if __name__ =='__main__':
     # load models
        # Load data
-    scaled_X_train_with_engineering = pd.read_csv("C:/Users/banji/creditCard_default_risk"
-    "/data/scaled_X_train_engineering.csv")
-    X_test= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/X_test.csv")
-
-    y_train= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_train.csv").squeeze()
-    y_test = pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_test.csv").squeeze()
+    scaled_X_train_with_engineering = pd.read_csv("datasets/scaled_X_train_engineering.csv")
+    X_test= pd.read_csv("datasets/X_test.csv")
+    y_train= pd.read_csv("datasets/y_train.csv").squeeze()
+    y_test = pd.read_csv("datasets/y_test.csv").squeeze()
     
-    # load models trained on scaled_X_train_engineering
+    # load untuned models trained on scaled_X_train_engineering
     tree = load_model("dec_tree_with_feature_engineering")
     log_reg = load_model("log_reg_with_feature_engineering")
     svm = load_model("svm_with_feature_engineering")
     knn = load_model("knn_with_feature_engineering")
     xgb = load_model("xgb_feature_engineering")
 
+    #load tuned_random_search objects
+    tree_random_search = load_random_search_object("tree_random_search")
+    log_reg_random_search = load_random_search_object("log_reg_random_search")
+    svm_random_search = load_random_search_object("svm_random_search")
+    knn_random_search = load_random_search_object("knn_random_search")
+    xgb_random_search = load_random_search_object("xgb_random_search")
 
-    models = {
+    # EXTRACT MODELS FROM SEARCH OBJECTS
+    tuned_tree = tree_random_search[0]
+    tuned_log_reg = log_reg_random_search[0]
+    tuned_svm = svm_random_search[0]
+    tuned_knn = knn_random_search[0]
+    tuned_xgb = xgb_random_search[0]
+    
+    print("loading of random search complete")
+
+    untuned_models = {
     "Decision Tree": tree,
     "Logistic Regression":log_reg,
     "Support Vector Machine":svm,
     "K-Nearest Neighbour":knn,
-    "XGBoost":xgb    
-    }
+    "XGBoost":xgb}
 
-    '''    plot_positive_class_metric(
-            models=models,
+    
+    tuned_models = {
+    "Decision Tree": tuned_tree,
+    "Logistic Regression":tuned_log_reg,
+    "Support Vector Machine":tuned_svm,
+    "K-Nearest Neighbour":tuned_knn,
+    "XGBoost":tuned_xgb}
+
+    
+    # Evaluation Metrics for UNTUNED Models
+    plot_positive_class_metric(
+            models=untuned_models,
             X_true=scaled_X_train_with_engineering,
             y_true=y_train,
             save= True,
-            title= "Positive Metrics for Untuned Models on Training Set"
-            )
-        print( "Positive Metrics for Untuned Models on Training Set Completed")
-'''
+            cross_val= False,
+            title= "Positive Metrics for Untuned Models on Training Set")
+
     plot_positive_class_metric(
-        models=models,
+        models=untuned_models,
         X_true=scaled_X_train_with_engineering,
         y_true=y_train,
         save= True,
         cross_val=True,
-        title= "Positive Metrics for Untuned Models on Cross-Validation set"
+        title= "Positive Metrics for Untuned Models on Cross-Validation set")
+
+    print("# Evaluation Metrics for UNTUNED Models")
+
+    # Evaluation Metrics for TUNED Models
+    plot_positive_class_metric(
+            models=tuned_models,
+            X_true=scaled_X_train_with_engineering,
+            y_true=y_train,
+            save= True,
+            cross_val=False,
+            title= "Evaluation Metrics on Training Set After Tuning (RandomisedSearchCV)")
+
+
+    plot_positive_class_metric(
+        models=tuned_models,
+        X_true=scaled_X_train_with_engineering,
+        y_true=y_train,
+        save= True,
+        cross_val=True,
+        title= "Evaluation Metrics (positive class) on Cross Validation Splits After Tuning (RandomisedSearchCV)"
         )
-    print("Positive Metrics for Untuned Models on Cross-Validation set COMPLETED")
+    
+    print("# Evaluation Metrics for TUNED Models")
+    # plots auc curve
+    for model_name, tuned_model in tuned_models.items():
+        plot_auc(
+            clf=tuned_model,
+            X_train=scaled_X_train_with_engineering,
+            y_train= y_train,
+            model_name=model_name,
+            save= True)
+
+    # plot pr auc curve
+    for model_name, tuned_model in tuned_models.items():
+        plot_pr_auc(
+            clf=tuned_model,
+            X_train=scaled_X_train_with_engineering,
+            y_train= y_train,
+            model_name=model_name,
+            save= True)

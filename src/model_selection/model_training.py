@@ -49,7 +49,7 @@ from pathlib import Path
 def save_model(model, model_name):
     """Saves a model to the models directory"""
     # Ensure models folder exists
-    folder = Path("../models")
+    folder = Path("models")
     folder.mkdir(parents=True, exist_ok=True) # moving forward i should have like a file for constants such as this
 
     # Full path
@@ -63,7 +63,7 @@ def save_model(model, model_name):
 
 def load_model(model_name):
     """Load a saved model from the models directory"""
-    model_path = Path("../models") / f"{model_name}.joblib"
+    model_path = Path("models") / f"{model_name}.joblib"
     
     # Load the model
     model = joblib.load(model_path)
@@ -116,11 +116,10 @@ def train_xgb(X_train,y_train,model_name,save=True):
 # Since I am repeating code, I am sure there is a more maintainable way. OOP?
 
 if __name__ == "__main__":
-    scaled_X_train_with_engineering = pd.read_csv("C:/Users/banji/creditCard_default_risk/data/scaled_X_train_engineering.csv")
-    X_test= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/X_test.csv")
-
-    y_train= pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_train.csv").squeeze()
-    y_test = pd.read_csv("C:/Users/banji/creditCard_default_risk/data/y_test.csv").squeeze()
+    scaled_X_train_with_engineering = pd.read_csv("datasets/scaled_X_train_engineering.csv")
+    X_test= pd.read_csv("datasets/X_test.csv")
+    y_train= pd.read_csv("datasets/y_train.csv").squeeze()
+    y_test = pd.read_csv("datasets/y_test.csv").squeeze()
 
     train_decision_tree(scaled_X_train_with_engineering,y_train,"dec_tree_with_feature_engineering")
     train_knn(scaled_X_train_with_engineering,y_train,"knn_with_feature_engineering")
