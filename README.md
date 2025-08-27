@@ -17,7 +17,7 @@
 ---
 
 ## 🧩 Overview
-<p style="font-size: 18px;text-align: justify;">
+<p style="font-size: 14px;text-align: justify;">
 Credit card default risk modelling has significant real-world applications for financial institutions, as the approval of credit card loans for consumers carries the risk of financial losses due to non-payment or late repayment. However, it also results in profits if more consumers repay their loans. The major challenge for these institutions is to award as many loans as possible to non-defaulters and fewer loans to defaulters. Consequently, the goal of this classification task depends on the institution's risk tolerance. While risk-averse institutions focus on minimising false negatives (classifying defaulters as non-defaulters), growth-oriented institutions may prioritise minimising false positives (classifying non-defaulters as defaulters).
 <p>
 
@@ -42,7 +42,7 @@ Credit card default risk modelling has significant real-world applications for f
 ## Results for EDA (See reports/EDA for all plots)
 ---
 
-<p style="font-size: 18px;text-align: justify;">
+<p style="font-size: 14px;text-align: justify;">
 An EDA of the dataset revealed that consumers with a university degree accounted for 47% of the data by education level, while single individuals accounted for 53% of consumers by marital status, with 60% of females comprising the consumer base, as illustrated in Figures 1, 2, and 3 respectively.
 </p>
 
