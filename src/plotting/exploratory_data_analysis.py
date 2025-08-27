@@ -2,6 +2,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from data.data_preparation import split_columns
+
 # setting general template
 sns.set_palette("colorblind")
 plt.style.use("seaborn-v0_8-whitegrid")
@@ -15,10 +17,76 @@ plt.rcParams.update({
 })
 # Setting random state for reproducibility and Template for Visualisations
 random_state= 70 
+# Creation of categorical map for categorical data for easy understanding of the dataset
+gender_map = {
+    1: 'male',
+    2: 'female'
+    }
+
+education_map = {
+    0: 'others',
+    1: 'graduate school',
+    2: 'university',
+    3: 'high school',
+    4: 'others',
+    5: 'others',
+    6: 'others'
+}
+
+marital_map = {
+    0: 'others',
+    1: 'married',
+    2: 'single',
+    3: 'divorce'
+            }
+
+target_map = {
+    0: 'non-default',
+    1: 'default'
+    }
+
+# Payment Delay Map
+delay_map = {
+-2: 'no usage',
+-1: 'paid full',
+0: 'revolving',
+1: '1m delay',
+2: '2m delay',
+3: '3m delay',
+4: '4m delay',
+5: '5m delay',
+6: '6m delay',
+7: '7m delay',
+8: '8m delay',
+9: '9m+ delay'
+}
+
+# function to group ages into decades
+def convert_age(age):
+    """
+    Converts age into decades for easy exploration.
+    
+    Parameters
+    ----------
+    age : int
+        Age of consumer.
+
+
+    Returns
+    -------
+    decade : str
+        Age converted into relevant decade.
+    
+    """
+    
+    # divide age by 10 to determine the decade
+    age = age//10
+    decade = f'{age*10}s'
+    return decade
 
 # Functions for Exploratory Data Analysis
 # 1. Boxplot
-def plot_boxplot(column, data, title=None, hue=None, by=None, save=False):
+def plot_boxplot(column, data, title='', hue=None, by=None, save=False):
     """
     Plots the distribution of a numerical feature using a boxplot, including
     median, quartiles, and outliers. Optionally, compares distributions across
@@ -57,7 +125,7 @@ def plot_boxplot(column, data, title=None, hue=None, by=None, save=False):
     plt.title(title)
     plt.tight_layout()     
     if save:
-        plt.savefig(fname = by + 'boxplot', 
+        plt.savefig(fname = f"reports/EDA/{by + 'boxplot'}.png", 
                 dpi=300, 
                 bbox_inches='tight',    
                 pad_inches=0.1,         
@@ -72,7 +140,7 @@ def plot_boxplot(column, data, title=None, hue=None, by=None, save=False):
 Histograms are used to show data density and the overall shape of a distribution.
 They help us understand where values cluster (high density), where they’re rare (low density)
 '''
-def plot_histogram(data, column = None, title=None):
+def plot_histogram(data, column = None, title=''):
     """
     Shows the data distribution and shape of distribution through a histogram for feature/target variable.
 
@@ -147,8 +215,8 @@ def plot_barchart(column, data, x_label, title=None, hue=None, rotation=0, save 
 
     plt.tight_layout()
     if save:
-        plt.savefig(fname = column, 
-                dpi=300, 
+        plt.savefig(fname = f"reports/EDA/{column}.png", 
+                    dpi=300, 
                 bbox_inches='tight',    
                 pad_inches=0.1,         
                 facecolor='white')
@@ -157,7 +225,72 @@ def plot_barchart(column, data, x_label, title=None, hue=None, rotation=0, save 
 if __name__ =="__main__":
     from data.data_collection import load_credit_data
     df = load_credit_data()
-    plot_boxplot(data= df, column= 'credit_amount', by = 'marital_status',hue='Y',title= 'Distribution of Credit Amount by Marital Status')
+    df_eda = df.copy()
 
+    # we will need to split the columns into categorical and continuous
+    splitted_columns = split_columns(df)
+    categorical_columns = splitted_columns['categorical_columns']
+    continuous_columns = splitted_columns['continuous_columns']
+    
+    # let us remove age from continuous and append to categorical since i want to kinda bin it
+    continuous_columns.remove('age')
+    categorical_columns.append('age')
 
     
+    print("Five rows for categorical data (before mapping)".center(100,'='))
+    print(df_eda[categorical_columns].head())
+
+    # application of the categorical map to all the columns
+    df_eda['gender'] = df_eda['gender'].map(gender_map )
+    df_eda['education'] = df_eda['education'].map(education_map)
+    df_eda['marital_status'] = df_eda['marital_status'].map(marital_map)
+    df_eda['Y'] = df_eda['Y'].map(target_map)
+    df_eda['age'] = df_eda['age'].map(convert_age)
+
+    # Select delay columns
+    delay = [column_name for column_name in categorical_columns if 'delay' in column_name.lower()]
+    df_eda[delay] = df_eda[delay].apply(lambda column: column.map(delay_map))
+
+    # let us check the categorical data now
+    print("Five rows for categorical data (after mapping)".center(100,'='))
+    print(df_eda[categorical_columns].head())
+
+    bill = [column_name for column_name in continuous_columns if 'bill' in column_name]
+    payment = [column_name for column_name in continuous_columns if 'payment' in column_name]
+
+    # Create total bill and payment for each consumer
+    df_eda["total_bill"] = df_eda[bill].sum(axis=1) 
+    df_eda['total_payment'] = df_eda[payment].sum(axis=1)
+
+    df_eda.head()
+
+    plot_boxplot(data= df_eda, column= 'credit_amount', by = 'marital_status',hue='Y',title= 'Distribution of Credit Amount by Marital Status', save=True)
+    plot_boxplot(data= df_eda, column= 'credit_amount', by = 'education',hue='Y',title = 'Distribution of Credit Amount by Education', save=True)
+    plot_boxplot(data= df_eda, column= 'credit_amount', by = 'gender',hue='Y', title = 'Distribution of Credit Amount by Gender', save=True)
+    plot_boxplot(data= df_eda, column= 'credit_amount', by = 'Y', title = 'Distribution of Credit Amount by Default', save=True)
+    plot_barchart(data=df_eda,column= 'age', title= 'Distribution of Age', x_label="Age Category", save=True )
+
+    # Barchart by Default Status
+    plot_barchart(data=df_eda, column= 'age', title= 'Number of loan applicants by Age and Default status', hue = 'Y', x_label="Age Category", save=True ) #hue = 'Y',
+    plot_barchart(data=df_eda,column= 'marital_status', title= 'Number of loan applicants by Marital and Default Status', hue = 'Y',x_label="Marital Status", save=True )
+    plot_barchart(data=df_eda,column= 'gender', title= 'Number of loan applicants by Gender and Default Status', hue = 'Y',x_label="Gender", save=True )
+    plot_barchart(data=df_eda,column= 'education', title= 'Number of loan applicants by Education and Default Status', hue = 'Y',x_label="Education", save=True )
+
+
+
+    # We use boxplot to compare continuous data by categorical data
+    # credit_amount by marital_status # prefer the title 'Distribution of Credit Amount by Marital Status
+
+
+    plot_barchart(data=df_eda,column= 'marital_status', title= 'Distribution of Marital Status', x_label="Marital Status", save=True )
+    plot_barchart(data=df_eda,column= 'gender', title= 'Distribution of Gender', x_label="Gender", save=True )
+    plot_barchart(data=df_eda,column= 'education', title= 'Distribution of Education', x_label="Education", save=True )
+    plot_barchart(data=df_eda,column= 'Y', title= 'Distribution of Target Variable', x_label="Target Variable", save=True )
+
+    # Delays
+    plot_barchart(data=df_eda,column= 'april_delay', title= 'Distribution of April Delay', x_label="April", rotation= 23, save=True)
+    plot_barchart(data=df_eda,column= 'may_delay', title= 'Distribution of May Delay', x_label="May", rotation= 23, save=True)
+    plot_barchart(data=df_eda,column= 'june_delay', title= 'Distribution of June Delay', x_label="June", rotation= 23, save=True)
+    plot_barchart(data=df_eda,column= 'july_delay', title= 'Distribution of July Delay', x_label="July", rotation= 23, save=True)
+    plot_barchart(data=df_eda,column= 'august_delay', title= 'Distribution of August Delay', x_label="August", rotation= 23, save=True)
+    plot_barchart(data=df_eda,column= 'sept_delay', title= 'Distribution of September Delay', x_label="September", rotation= 23, save=True)

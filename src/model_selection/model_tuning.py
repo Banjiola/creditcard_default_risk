@@ -147,7 +147,6 @@ def save_random_search_object(object, object_name):
 def load_random_search_object(object_name):
     """Load a saved random object from the models directory"""
     object_path = Path("models/random_search_objects") / f"{object_name}.joblib"
-    
     # Load the model
     object = joblib.load(object_path)
     print(f"{object_name} loaded from {object_path}") # remove later
