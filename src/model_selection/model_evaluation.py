@@ -1,5 +1,5 @@
 import pandas as pd
-from evaluation_utils import get_cv_metrics, get_train_metrics
+from model_selection.evaluation_utils import get_cv_metrics, get_train_metrics
 from sklearn.model_selection import StratifiedKFold
 from model_selection.model_training import load_model
 

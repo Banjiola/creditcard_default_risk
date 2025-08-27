@@ -10,7 +10,10 @@ import joblib
 
 random_state= 70 
 # split data
-def get_train_test_data(X, y, train_size=0.7, random_state=random_state, stratify=False):
+def get_train_test_data(X, y, train_size=0.7, random_state=random_state, stratify=False): 
+    # using stratify=False is just a design flaw imo because i spent so much time trying 
+    # to check how my data changed when the only issue was that i didnt enable stratify. 
+    # Moving forward, simply stratify=True
     """
     Split data into training and testing sets with optional stratification.
     
