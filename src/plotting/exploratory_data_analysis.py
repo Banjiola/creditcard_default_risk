@@ -215,7 +215,7 @@ def plot_barchart(column, data, x_label, title=None, hue=None, rotation=0, save 
 
     plt.tight_layout()
     if save:
-        plt.savefig(fname = f"reports/EDA/{column}.png", 
+        plt.savefig(fname = f"reports/EDA/{title}.png",
                     dpi=300, 
                 bbox_inches='tight',    
                 pad_inches=0.1,         
@@ -263,6 +263,8 @@ if __name__ =="__main__":
     df_eda['total_payment'] = df_eda[payment].sum(axis=1)
 
     df_eda.head()
+
+    plot_barchart(data=df_eda, column= 'marital_status', title= 'Number of loan applicants by Marital and Default Status', hue = 'Y',x_label="Marital Status", save=True )
 
     plot_boxplot(data= df_eda, column= 'credit_amount', by = 'marital_status',hue='Y',title= 'Distribution of Credit Amount by Marital Status', save=True)
     plot_boxplot(data= df_eda, column= 'credit_amount', by = 'education',hue='Y',title = 'Distribution of Credit Amount by Education', save=True)
