@@ -95,14 +95,6 @@ Table 2. Performance on Test Set (Top Three Models Models)
 | K Nearest Neighbour     | 0.69     | 0.71         |
 
 
-## 📊 Dashboard / Visuals
-
-Embed or link:
-- [Power BI Dashboard (Link)](#)
-- Tableau Public URL (if available)
-- Screenshots of visuals with explanations
-
-
 ---
 
 ## 👨‍💻 Author
