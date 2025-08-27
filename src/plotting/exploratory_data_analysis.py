@@ -125,7 +125,7 @@ def plot_boxplot(column, data, title='', hue=None, by=None, save=False):
     plt.title(title)
     plt.tight_layout()     
     if save:
-        plt.savefig(fname = f"reports/EDA/{by + 'boxplot'}.png", 
+        plt.savefig(fname = f"reports/EDA/{by + 'boxplot'}.png",  # type: ignore
                 dpi=300, 
                 bbox_inches='tight',    
                 pad_inches=0.1,         
@@ -201,11 +201,11 @@ def plot_barchart(column, data, x_label, title=None, hue=None, rotation=0, save 
     ax = sns.countplot(data= data, x= column, hue = hue) # add hue = target variable
 
     for p in ax.patches:
-        count = int(p.get_height())
+        count = int(p.get_height()) # type: ignore
         ax.annotate(
-            str(count), (p.get_x() + p.get_width() / 2., p.get_height()),
+            str(count), (p.get_x() + p.get_width() / 2., p.get_height()), # type: ignore
                 ha='center', va='bottom')
-    ax.set_title(title)
+    ax.set_title(title) # type: ignore
     ax.set_xlabel(x_label)
     ax.set_ylabel("Count")
     plt.xticks(rotation = rotation)
