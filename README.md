@@ -48,18 +48,18 @@ An EDA of the dataset revealed that consumers with a university degree accounted
 
 
   <figure>
-    <img src="reports\EDA\education.png" width=600>
+    <img src="reports\EDA\education.png" width=400>
     <figcaption style="font-size: 17px;"><b>Figure 1. Distribution of Consumers by Education</b></figcaption>
   </figure>
 
 
   <figure>
-    <img src="reports\EDA\marital_status.png" width=600>
+    <img src="reports\EDA\marital_status.png" width=400>
     <figcaption style="font-size: 17px;"><b> Figure 2. Distribution of Consumers by Marital Status</b></figcaption>
   </figure>
 
   <figure>
-    <img src="reports\EDA\Number of loan applicants by Marital and Default Status.png" width=600>
+    <img src="reports\EDA\Number of loan applicants by Marital and Default Status.png" width=400>
     <figcaption style="font-size: 17px;"><b> Figure 3. Distribution of Consumers by Marital and Default Status</b></figcaption>
   </figure>
 
