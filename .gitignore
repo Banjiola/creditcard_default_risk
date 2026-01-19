@@ -1,4 +1,5 @@
-data/
+# I used datasets to name the folder containing my data. Moving forward, I must use data/
+datasets/ 
 
 # This tells gitignore to exclude folders that start with my
 my*/ 
