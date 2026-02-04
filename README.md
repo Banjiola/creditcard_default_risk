@@ -1,4 +1,4 @@
-# Credit Card Default PredicFraud Detection
+# Credit Card Default Prediction
  
 
 > *Using machine learning to accurately predict credit card defaulters and maximise profits by accurately predicting credit card non defaulters.*
